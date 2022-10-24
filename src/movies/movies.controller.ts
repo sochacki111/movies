@@ -18,7 +18,7 @@ export class MoviesController {
   }
 
   @Get()
-  findAll(@Res() res: Response, @Query() filter: GetMoviesDto) {
+  findAll(@Query() filter: GetMoviesDto, @Res() res: Response) {
     console.log('filter', filter);
 
     // TODO Hide in env
@@ -30,7 +30,8 @@ export class MoviesController {
     const transformer = new Transform({
       objectMode: true,
       transform(jsonItem, encoding, callback) {
-        if (jsonItem.runtime === '130') {
+        const runtime = Number(jsonItem.runtime);
+        if (runtime >= filter.duration - 10 && runtime <= filter.duration) {
           callback(null, jsonItem);
         } else {
           callback();
@@ -39,7 +40,7 @@ export class MoviesController {
     });
 
     input
-      .pipe(JSONStream.parse('movies.*'))
+      .pipe(JSONStream.parse('movies.*')) // TODO remove hardcoded movies
       .pipe(transformer)
       .pipe(JSONStream.stringify()) // Convert it back to JSON
       .pipe(res);
