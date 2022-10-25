@@ -11,5 +11,5 @@ export class GetMoviesDto {
   @IsOptional()
   @IsArray()
   @IsEnum(Genre, { each: true })
-  readonly genres?: Genre[];
+  readonly genres?: Genre[]; // TODO SET instead of list?
 }
