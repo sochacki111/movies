@@ -11,6 +11,7 @@ export class MoviesController {
 
   @Post()
   async create(@Body() createMovieDto: CreateMovieDto) {
+    // await this.moviesService.create(createMovieDto);
     const dbFile = await fs.promises.readFile(
       join(process.cwd(), 'src', 'db', 'db.json'),
     );
@@ -41,46 +42,8 @@ export class MoviesController {
     return newMovie;
   }
 
-  private getRandomMovie(movies: any[]) {
-    return movies[Math.floor(Math.random() * movies.length)];
-  }
-
   @Get()
-  async findAll(@Query() filter: GetMoviesDto) {
-    console.log('filter: ', filter);
-
-    const dbFile = await fs.promises.readFile(
-      join(process.cwd(), 'src', 'db', 'db.json'),
-    );
-    const dbJson = JSON.parse(dbFile.toString());
-    const allMovies = dbJson.movies;
-    let movies = allMovies;
-
-    if (filter.duration) {
-      movies = allMovies.filter(
-        (movie) =>
-          movie.runtime >= filter.duration - 10 &&
-          movie.runtime <= filter.duration + 10,
-      );
-    }
-
-    if (filter.genres) {
-      // Mutate movies
-      movies.forEach((movie) => {
-        const intersection = filter.genres.filter((genre) =>
-          movie.genres.includes(genre),
-        ).length;
-        movie.intersection = intersection;
-      });
-      movies.sort((a, b) => b.intersection - a.intersection);
-    }
-
-    if (!filter || !filter.genres) {
-      const randomMovie = this.getRandomMovie(movies);
-
-      return randomMovie;
-    }
-
-    return movies;
+  async find(@Query() filter: GetMoviesDto) {
+    return this.moviesService.find(filter);
   }
 }
