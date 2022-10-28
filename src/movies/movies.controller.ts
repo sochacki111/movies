@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import { createReadStream } from 'fs';
+import fs from 'fs';
 import JSONStream from 'JSONStream';
 import { join } from 'path';
 import { Transform } from 'stream';
@@ -13,14 +13,41 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  async create(@Body() createMovieDto: CreateMovieDto) {
+    const dbFile = await fs.promises.readFile(
+      join(process.cwd(), 'src', 'db', 'db.json'),
+    );
+    const dbJson = JSON.parse(dbFile.toString());
+
+    const nextId =
+      dbJson.movies.reduce((acc, curr) => Math.max(acc, curr.id), 0) + 1;
+
+    const newMovie = {
+      id: nextId,
+      title: createMovieDto.title,
+      year: createMovieDto.year.toString(),
+      runtime: createMovieDto.runtime.toString(),
+      genres: createMovieDto.genres,
+      director: createMovieDto.director,
+      actors: createMovieDto.actors,
+      plot: createMovieDto.plot,
+      posterUrl: createMovieDto.posterUrl,
+    };
+
+    dbJson.movies.push(newMovie);
+
+    await fs.promises.writeFile(
+      join(process.cwd(), 'src', 'db', 'db.json'),
+      JSON.stringify(dbJson, null, 2),
+    );
+
+    return newMovie;
   }
 
   @Get()
   findAll(@Query() filter: GetMoviesDto, @Res() res: Response) {
     // TODO Hide in env
-    const readStream = createReadStream(
+    const readStream = fs.createReadStream(
       join(process.cwd(), 'src', 'db', 'db.json'),
       'utf-8',
     );
