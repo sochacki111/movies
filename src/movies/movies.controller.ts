@@ -1,9 +1,6 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import fs from 'fs';
-import JSONStream from 'JSONStream';
 import { join } from 'path';
-import { Transform } from 'stream';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { MoviesService } from './movies.service';
@@ -44,52 +41,46 @@ export class MoviesController {
     return newMovie;
   }
 
+  private getRandomMovie(movies: any[]) {
+    return movies[Math.floor(Math.random() * movies.length)];
+  }
+
   @Get()
-  findAll(@Query() filter: GetMoviesDto, @Res() res: Response) {
-    // TODO Hide in env
-    const readStream = fs.createReadStream(
+  async findAll(@Query() filter: GetMoviesDto) {
+    console.log('filter: ', filter);
+
+    const dbFile = await fs.promises.readFile(
       join(process.cwd(), 'src', 'db', 'db.json'),
-      'utf-8',
     );
+    const dbJson = JSON.parse(dbFile.toString());
+    const allMovies = dbJson.movies;
+    let movies = allMovies;
 
-    const durationTransformer = new Transform({
-      objectMode: true,
-      transform(jsonItem, encoding, callback): void {
-        const runtime = Number(jsonItem.runtime);
-        if (runtime >= filter.duration - 10 && runtime <= filter.duration) {
-          callback(null, jsonItem);
-        } else {
-          callback(); // Dont push chunk
-        }
-      },
-    });
+    if (filter.duration) {
+      movies = allMovies.filter(
+        (movie) =>
+          movie.runtime >= filter.duration - 10 &&
+          movie.runtime <= filter.duration + 10,
+      );
+    }
 
-    const filteredMovies = [];
-
-    const genreTransformer = new Transform({
-      objectMode: true,
-      transform(jsonItem, encoding, callback): void {
-        const intersection = filter.genres.filter((element) =>
-          jsonItem.genres.includes(element),
+    if (filter.genres) {
+      // Mutate movies
+      movies.forEach((movie) => {
+        const intersection = filter.genres.filter((genre) =>
+          movie.genres.includes(genre),
         ).length;
-
-        if (intersection) {
-          filteredMovies.push({ ...jsonItem, intersection });
-        }
-        callback();
-      },
-    });
-
-    readStream
-      .pipe(JSONStream.parse('movies.*')) // TODO remove hardcoded movies
-      .pipe(durationTransformer) // TODO Make one tranformer module
-      .pipe(genreTransformer)
-      .pipe(JSONStream.stringify()) // TODO Convert it back to JSON
-      .on('end', () => {
-        const sortedMovies = filteredMovies.sort(
-          (a, b) => b.intersection - a.intersection,
-        );
-        res.send(sortedMovies); // TODO Implement mapper to remove intersection property
+        movie.intersection = intersection;
       });
+      movies.sort((a, b) => b.intersection - a.intersection);
+    }
+
+    if (!filter || !filter.genres) {
+      const randomMovie = this.getRandomMovie(movies);
+
+      return randomMovie;
+    }
+
+    return movies;
   }
 }
