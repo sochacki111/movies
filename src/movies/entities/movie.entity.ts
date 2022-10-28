@@ -1,13 +1,15 @@
 import { Genre } from '../enums/genres.enum';
 
 export class Movie {
+  id: number;
+
   genres: Genre[];
 
   title: string;
 
-  year: number;
+  year: string;
 
-  runtime: number;
+  runtime: string;
 
   director: string;
 
