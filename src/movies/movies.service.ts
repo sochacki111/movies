@@ -7,8 +7,8 @@ import { MoviesRepository } from './movies.repository';
 export class MoviesService {
   constructor(private readonly moviesRepository: MoviesRepository) {}
 
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+  async create(createMovieDto: CreateMovieDto) {
+    return await this.moviesRepository.create(createMovieDto);
   }
 
   async find(filter: GetMoviesDto) {
