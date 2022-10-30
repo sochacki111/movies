@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import fs from 'fs';
-import { join } from 'path';
-import { DbJson } from '../db/interfaces/db-json.interface';
+import { DbJsonService } from '../db/db-json.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { Movie } from './entities/movie.entity';
@@ -9,8 +7,10 @@ import { Genre } from './enums/genres.enum';
 
 @Injectable()
 export class MoviesRepository {
+  constructor(private readonly dbJsonService: DbJsonService) {}
+
   async create(createMovieDto: CreateMovieDto): Promise<Movie> {
-    const dbJson = await this.getDbFileAsJson();
+    const dbJson = await this.dbJsonService.read();
 
     const nextId = this.getNextId(dbJson.movies);
 
@@ -28,13 +28,13 @@ export class MoviesRepository {
 
     dbJson.movies.push(newMovie);
 
-    await this.saveDbFile(dbJson);
+    await this.dbJsonService.save(dbJson);
 
     return newMovie;
   }
 
   async findAll(filter?: GetMoviesDto): Promise<Movie[]> {
-    const allMovies = (await this.getDbFileAsJson()).movies;
+    const allMovies = (await this.dbJsonService.read()).movies;
     let foundMovies = allMovies;
 
     if (filter?.duration) {
@@ -51,24 +51,6 @@ export class MoviesRepository {
   private getNextId(movies: Movie[]): number {
     // TODO Make generic
     return movies.reduce((acc: number, curr) => Math.max(acc, curr.id), 0) + 1;
-  }
-
-  // TODO Move generic
-  private async saveDbFile(dbJson: DbJson): Promise<void> {
-    await fs.promises.writeFile(
-      // TODO Hide in env
-      join(process.cwd(), 'src', 'db', 'db.json'),
-      JSON.stringify(dbJson, null, 2),
-    );
-  }
-
-  // TODO Move generic
-  private async getDbFileAsJson(): Promise<DbJson> {
-    // TODO Hide in env
-    const dbFile = await fs.promises.readFile(
-      join(process.cwd(), 'src', 'db', 'db.json'),
-    );
-    return JSON.parse(dbFile.toString());
   }
 
   private filterDuration(movies: Movie[], duration: number): Movie[] {
