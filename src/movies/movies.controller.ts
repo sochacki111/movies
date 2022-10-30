@@ -14,7 +14,7 @@ export class MoviesController {
   }
 
   @Get()
-  async find(@Query() filter: GetMoviesDto): Promise<Movie | Movie[]> {
+  async find(@Query() filter?: GetMoviesDto): Promise<Movie | Movie[]> {
     return this.moviesService.find(filter);
   }
 }

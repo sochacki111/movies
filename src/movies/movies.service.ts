@@ -13,7 +13,7 @@ export class MoviesService {
     return await this.moviesRepository.create(createMovieDto);
   }
 
-  async find(filter: GetMoviesDto): Promise<Movie | Movie[]> {
+  async find(filter?: GetMoviesDto): Promise<Movie | Movie[]> {
     const movies = await this.moviesRepository.findAll(filter);
 
     if (!filter || !filter.genres) {

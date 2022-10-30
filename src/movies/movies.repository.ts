@@ -79,16 +79,30 @@ export class MoviesRepository {
   }
 
   private sortByGenres(movies: Movie[], genres: Genre[]): Movie[] {
-    return movies.sort((a, b) => {
-      const aIntersection = genres.filter((genre) => {
-        a.genres.includes(genre);
-      }).length;
-
-      const bIntersection = genres.filter((genre) => {
-        b.genres.includes(genre);
-      }).length;
-
-      return bIntersection - aIntersection;
+    const moviesWithMatchScore = movies.map((movie) => {
+      const matchScore = genres.filter((genre) =>
+        movie.genres.includes(genre),
+      ).length;
+      return { ...movie, matchScore };
     });
+
+    return moviesWithMatchScore
+      .filter((movie) => movie.matchScore)
+      .sort((a, b) => {
+        return b.matchScore - a.matchScore;
+      })
+      .map((movie) => {
+        return {
+          id: movie.id,
+          genres: movie.genres,
+          title: movie.title,
+          actors: movie.actors,
+          director: movie.director,
+          plot: movie.plot,
+          posterUrl: movie.posterUrl,
+          runtime: movie.runtime,
+          year: movie.year,
+        };
+      });
   }
 }
