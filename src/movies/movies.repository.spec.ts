@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DbJsonService } from '../db/db-json.service';
+import { DbJson } from '../db/interfaces/db-json.interface';
+import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { Genre } from './enums/genres.enum';
 import { MoviesRepository } from './movies.repository';
@@ -7,6 +9,7 @@ import { MoviesRepository } from './movies.repository';
 describe('MoviesRepository', () => {
   let moviesRepository: MoviesRepository;
   let dbJsonService: DbJsonService;
+  let dbJson: DbJson;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,14 +18,8 @@ describe('MoviesRepository', () => {
 
     moviesRepository = module.get<MoviesRepository>(MoviesRepository);
     dbJsonService = module.get<DbJsonService>(DbJsonService);
-  });
 
-  it('should be defined', () => {
-    expect(moviesRepository).toBeDefined();
-  });
-
-  describe('findAll', () => {
-    const dbJson = {
+    dbJson = {
       genres: [Genre.Comedy, Genre.Fantasy, Genre.Sport],
       movies: [
         {
@@ -51,7 +48,77 @@ describe('MoviesRepository', () => {
         },
       ],
     };
+  });
 
+  it('should be defined', () => {
+    expect(moviesRepository).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should add new movie with optional fields', async () => {
+      jest.spyOn(dbJsonService, 'read').mockImplementation(async () => dbJson);
+      jest
+        .spyOn(dbJsonService, 'save')
+        .mockImplementation(async () => Promise.resolve());
+
+      const createMovieDto: CreateMovieDto = {
+        title: 'test',
+        year: 2000,
+        runtime: 130,
+        genres: [Genre.Biography, Genre.Comedy, Genre.Drama],
+        director: 'test test',
+        actors:
+          'test test, Ryan Gosling, Rudy Eisenzopf, Casey Groves, Charlie Talbert',
+        plot: 'test plot.',
+        posterUrl: 'https://test.jpg',
+      };
+
+      const result = await moviesRepository.create(createMovieDto);
+
+      expect(result).toStrictEqual({
+        id: expect.any(Number),
+        title: createMovieDto.title,
+        year: createMovieDto.year.toString(),
+        runtime: createMovieDto.runtime.toString(),
+        genres: createMovieDto.genres,
+        director: createMovieDto.director,
+        actors: createMovieDto.actors,
+        plot: createMovieDto.plot,
+        posterUrl: createMovieDto.posterUrl,
+      });
+    });
+
+    it('should add new movie without optional fields', async () => {
+      jest.spyOn(dbJsonService, 'read').mockImplementation(async () => dbJson);
+      jest
+        .spyOn(dbJsonService, 'save')
+        .mockImplementation(async () => Promise.resolve());
+
+      const createMovieDto: CreateMovieDto = {
+        title: 'test',
+        year: 2000,
+        runtime: 130,
+        genres: [Genre.Biography, Genre.Comedy, Genre.Drama],
+        director: 'test test',
+      };
+
+      const result = await moviesRepository.create(createMovieDto);
+
+      expect(result).toStrictEqual({
+        id: expect.any(Number),
+        title: createMovieDto.title,
+        year: createMovieDto.year.toString(),
+        runtime: createMovieDto.runtime.toString(),
+        genres: createMovieDto.genres,
+        director: createMovieDto.director,
+        actors: '',
+        plot: '',
+        posterUrl: '',
+      });
+    });
+  });
+
+  describe('findAll', () => {
     it('should return an array of movies filtered by duration', async () => {
       const filter: GetMoviesDto = { duration: 100 };
 
