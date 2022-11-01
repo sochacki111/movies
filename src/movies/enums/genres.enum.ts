@@ -11,6 +11,7 @@ export enum Genre {
   Family = 'Family',
   Mystery = 'Mystery',
   Biography = 'Biography',
+  Action = 'Action',
   Film_Noir = 'Film-Noir',
   Romance = 'Romance',
   Sci_Fi = 'Sci-Fi',
