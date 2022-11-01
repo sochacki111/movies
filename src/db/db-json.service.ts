@@ -9,8 +9,9 @@ export class DbJsonService {
     // TODO Hide in env
     const dbFile = await fs.promises.readFile(
       join(process.cwd(), 'src', 'db', 'db.json'),
+      { encoding: 'utf-8' },
     );
-    return JSON.parse(dbFile.toString());
+    return JSON.parse(dbFile);
   }
 
   async save(dbJson: DbJson): Promise<void> {
