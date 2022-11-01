@@ -25,7 +25,7 @@ export class MoviesService {
     return movies;
   }
 
-  // TODO Move to repository?
+  // TODO Throw not found
   private getRandomMovie(movies: Movie[]): Movie {
     return movies[Math.floor(Math.random() * movies.length)];
   }

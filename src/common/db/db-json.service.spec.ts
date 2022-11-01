@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DbJsonService } from './db-json.service';
 import fs from 'fs';
 import { DbJson } from './interfaces/db-json.interface';
-import { Genre } from '../movies/enums/genres.enum';
+import { Genre } from '../../movies/enums/genres.enum';
 
 describe('DbJsonService', () => {
   let dbJsonService: DbJsonService;

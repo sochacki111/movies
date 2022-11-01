@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DbJsonService } from '../db/db-json.service';
+import { DbJsonService } from '../common/db/db-json.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { Movie } from './entities/movie.entity';
