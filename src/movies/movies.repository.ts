@@ -51,7 +51,7 @@ export class MoviesRepository {
     }
 
     if (filter?.genres) {
-      foundMovies = this.sortByGenres(foundMovies, filter.genres);
+      foundMovies = this.filterByGenres(foundMovies, filter.genres);
     }
 
     return foundMovies;
@@ -70,7 +70,7 @@ export class MoviesRepository {
     );
   }
 
-  private sortByGenres(movies: Movie[], genres: Genre[]): Movie[] {
+  private filterByGenres(movies: Movie[], genres: Genre[]): Movie[] {
     const moviesWithMatchScore = movies.map((movie) => {
       const matchScore = genres.filter((genre) =>
         movie.genres.includes(genre),
@@ -80,9 +80,7 @@ export class MoviesRepository {
 
     return moviesWithMatchScore
       .filter((movie) => movie.matchScore)
-      .sort((a, b) => {
-        return b.matchScore - a.matchScore;
-      })
+      .sort((a, b) => b.matchScore - a.matchScore)
       .map((movie) => {
         return {
           id: movie.id,
