@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DbJsonService } from '../db/db-json.service';
-import { DbJson } from '../db/interfaces/db-json.interface';
+import { DbJsonService } from '../common/db/db-json.service';
+import { DbJson } from '../common/db/interfaces/db-json.interface';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { Genre } from './enums/genres.enum';

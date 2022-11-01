@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DbJsonService } from '../db/db-json.service';
+import { AppConfigService } from '../common/config/app-config.service';
+import { AppConfig } from '../common/config/config';
+import { DbJsonService } from '../common/db/db-json.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { Movie } from './entities/movie.entity';
@@ -7,7 +9,14 @@ import { Genre } from './enums/genres.enum';
 
 @Injectable()
 export class MoviesRepository {
-  constructor(private readonly dbJsonService: DbJsonService) {}
+  private readonly durationRange: AppConfig['durationRange'];
+
+  constructor(
+    private readonly dbJsonService: DbJsonService,
+    private readonly configService: AppConfigService,
+  ) {
+    this.durationRange = this.configService.get('durationRange');
+  }
 
   async create(createMovieDto: CreateMovieDto): Promise<Movie> {
     const dbJson = await this.dbJsonService.read();
@@ -56,7 +65,8 @@ export class MoviesRepository {
   private filterDuration(movies: Movie[], duration: number): Movie[] {
     return movies.filter(
       (movie) =>
-        +movie.runtime >= duration - 10 && +movie.runtime <= duration + 10, // TODO Set 10 in env
+        +movie.runtime >= duration - this.durationRange &&
+        +movie.runtime <= duration + this.durationRange,
     );
   }
 
