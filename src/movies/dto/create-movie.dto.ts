@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDefined,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -21,11 +22,11 @@ export class CreateMovieDto {
   @MaxLength(255)
   title: string;
 
-  // TODO IsYear
-  @IsNotEmpty()
+  @IsDefined()
   @IsNumber()
   year: number;
 
+  @IsDefined()
   @IsNumber()
   @Min(0)
   runtime: number;
