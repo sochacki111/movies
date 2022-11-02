@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConfigServiceMock, TestAppConfig } from '../../test/helper';
@@ -148,7 +149,7 @@ describe('MoviesService', () => {
         title: expect.any(String),
         year: expect.any(String),
         runtime: expect.any(String),
-        genres: expect.any(Array<Genre>),
+        genres: expect.any(Set<Genre>),
         director: expect.any(String),
         actors: expect.any(String),
         plot: expect.any(String),
@@ -276,12 +277,24 @@ describe('MoviesService', () => {
         title: expect.any(String),
         year: expect.any(String),
         runtime: expect.any(String),
-        genres: expect.any(Array<Genre>),
+        genres: expect.any(Set<Genre>),
         director: expect.any(String),
         actors: expect.any(String),
         plot: expect.any(String),
         posterUrl: expect.any(String),
       });
+    });
+
+    it('should throw NotFound on not existing random movie', async () => {
+      const emptyMovies: Movie[] = [];
+
+      jest
+        .spyOn(moviesRepository, 'findAll')
+        .mockImplementation(async () => emptyMovies);
+
+      await expect(moviesService.find()).rejects.toEqual(
+        new NotFoundException(),
+      );
     });
   });
 });
