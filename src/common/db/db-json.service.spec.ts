@@ -1,15 +1,30 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { DbJsonService } from './db-json.service';
 import fs from 'fs';
-import { DbJson } from './interfaces/db-json.interface';
+import { getConfigServiceMock, TestAppConfig } from '../../../test/helper';
 import { Genre } from '../../movies/enums/genres.enum';
+import { AppConfigService } from '../config/app-config.service';
+import { DbJsonService } from './db-json.service';
+import { DbJson } from './interfaces/db-json.interface';
 
 describe('DbJsonService', () => {
   let dbJsonService: DbJsonService;
 
+  const config: TestAppConfig = {
+    durationRange: 10,
+    dbJsonPath: 'path/mock',
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DbJsonService],
+      providers: [
+        DbJsonService,
+        AppConfigService,
+        {
+          provide: ConfigService,
+          useFactory: getConfigServiceMock(config),
+        },
+      ],
     }).compile();
 
     dbJsonService = module.get<DbJsonService>(DbJsonService);
@@ -39,29 +54,7 @@ describe('DbJsonService', () => {
   describe('save', () => {
     it('should save json file', async () => {
       const dbJson: DbJson = {
-        genres: [
-          Genre.Comedy,
-          Genre.Fantasy,
-          Genre.Crime,
-          Genre.Drama,
-          Genre.Music,
-          Genre.Adventure,
-          Genre.History,
-          Genre.Thriller,
-          Genre.Animation,
-          Genre.Family,
-          Genre.Mystery,
-          Genre.Biography,
-          Genre.Action,
-          Genre.Film_Noir,
-          Genre.Romance,
-          Genre.Sci_Fi,
-          Genre.War,
-          Genre.Western,
-          Genre.Horror,
-          Genre.Musical,
-          Genre.Sport,
-        ],
+        genres: Object.values(Genre),
         movies: [
           {
             id: 1,

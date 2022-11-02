@@ -1,4 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getConfigServiceMock, TestAppConfig } from '../../test/helper';
+import { AppConfigService } from '../common/config/app-config.service';
 import { DbJsonService } from '../common/db/db-json.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
@@ -11,9 +14,23 @@ describe('MoviesService', () => {
   let moviesService: MoviesService;
   let moviesRepository: MoviesRepository;
 
+  const config: TestAppConfig = {
+    durationRange: 10,
+    dbJsonPath: 'path/mock',
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MoviesService, MoviesRepository, DbJsonService],
+      providers: [
+        MoviesService,
+        MoviesRepository,
+        DbJsonService,
+        AppConfigService,
+        {
+          provide: ConfigService,
+          useFactory: getConfigServiceMock(config),
+        },
+      ],
     }).compile();
 
     moviesService = module.get<MoviesService>(MoviesService);
