@@ -70,10 +70,10 @@ export class MoviesRepository {
     );
   }
 
-  private filterByGenres(movies: Movie[], genres: Genre[]): Movie[] {
+  private filterByGenres(movies: Movie[], genres: Set<Genre>): Movie[] {
     const moviesWithMatchScore = movies.map((movie) => {
-      const matchScore = genres.filter((genre) =>
-        movie.genres.includes(genre),
+      const matchScore = [...genres].filter((genre: Genre) =>
+        [...movie.genres].includes(genre),
       ).length;
       return { ...movie, matchScore };
     });
