@@ -49,7 +49,7 @@ describe('MoviesController', () => {
         title: 'test',
         year: 2000,
         runtime: 130,
-        genres: [Genre.Biography, Genre.Comedy, Genre.Drama],
+        genres: new Set([Genre.Biography, Genre.Comedy, Genre.Drama]),
         director: 'test test',
         actors:
           'test test, Ryan Gosling, Rudy Eisenzopf, Casey Groves, Charlie Talbert',
@@ -83,7 +83,7 @@ describe('MoviesController', () => {
         title: 'test',
         year: 2000,
         runtime: 130,
-        genres: [Genre.Biography, Genre.Comedy, Genre.Drama],
+        genres: new Set([Genre.Biography, Genre.Comedy, Genre.Drama]),
         director: 'test test',
       };
 
@@ -116,7 +116,7 @@ describe('MoviesController', () => {
         title: 'Beetlejuice',
         year: '1988',
         runtime: '92',
-        genres: [Genre.Comedy, Genre.Fantasy],
+        genres: new Set([Genre.Comedy, Genre.Fantasy]),
         director: 'Tim Burton',
         actors: 'Alec Baldwin, Geena Davis, Annie McEnroe, Maurice Page',
         plot: 'A couple of recently deceased ghosts contract the services of a "bio-exorcist" in order to remove the obnoxious new owners of their house.',
@@ -139,7 +139,7 @@ describe('MoviesController', () => {
       const moviesFilteredByGenre = [
         {
           id: 1,
-          genres: [Genre.Comedy, Genre.Fantasy],
+          genres: new Set([Genre.Comedy, Genre.Fantasy]),
           title: 'Beetlejuice',
           actors: 'Alec Baldwin, Geena Davis, Annie McEnroe, Maurice Page',
           director: 'Tim Burton',
@@ -151,7 +151,7 @@ describe('MoviesController', () => {
         },
         {
           id: 38,
-          genres: [Genre.Comedy, Genre.Fantasy, Genre.Romance],
+          genres: new Set([Genre.Comedy, Genre.Fantasy, Genre.Romance]),
           title: 'Midnight in Paris',
           actors: 'Owen Wilson, Rachel McAdams, Kurt Fuller, Mimi Kennedy',
           director: 'Woody Allen',
@@ -163,7 +163,7 @@ describe('MoviesController', () => {
         },
       ];
 
-      const filter: GetMoviesDto = { genres: [Genre.Comedy] };
+      const filter: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
 
       jest
         .spyOn(moviesService, 'find')
@@ -178,7 +178,7 @@ describe('MoviesController', () => {
       const moviesFilteredByDurationAndGenre = [
         {
           id: 1,
-          genres: [Genre.Comedy, Genre.Fantasy],
+          genres: new Set([Genre.Comedy, Genre.Fantasy]),
           title: 'Beetlejuice',
           actors: 'Alec Baldwin, Geena Davis, Annie McEnroe, Maurice Page',
           director: 'Tim Burton',
@@ -190,7 +190,7 @@ describe('MoviesController', () => {
         },
         {
           id: 38,
-          genres: [Genre.Comedy, Genre.Fantasy, Genre.Romance],
+          genres: new Set([Genre.Comedy, Genre.Fantasy, Genre.Romance]),
           title: 'Midnight in Paris',
           actors: 'Owen Wilson, Rachel McAdams, Kurt Fuller, Mimi Kennedy',
           director: 'Woody Allen',
@@ -201,7 +201,10 @@ describe('MoviesController', () => {
           year: '2011',
         },
       ];
-      const filter: GetMoviesDto = { duration: 100, genres: [Genre.Comedy] };
+      const filter: GetMoviesDto = {
+        duration: 100,
+        genres: new Set([Genre.Comedy]),
+      };
 
       jest
         .spyOn(moviesService, 'find')
@@ -214,7 +217,7 @@ describe('MoviesController', () => {
     it('should return random movie', async () => {
       const randomMovie = {
         id: 1,
-        genres: [Genre.Comedy, Genre.Fantasy],
+        genres: new Set([Genre.Comedy, Genre.Fantasy]),
         title: 'Beetlejuice',
         actors: 'Alec Baldwin, Geena Davis, Annie McEnroe, Maurice Page',
         director: 'Tim Burton',

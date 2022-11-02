@@ -3,7 +3,7 @@ import { Genre } from '../enums/genres.enum';
 export class Movie {
   id: number;
 
-  genres: Genre[];
+  genres: Set<Genre>;
 
   title: string;
 

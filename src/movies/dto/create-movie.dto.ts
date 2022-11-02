@@ -1,50 +1,53 @@
 import {
-  IsArray,
+  ArrayNotEmpty,
+  ArrayUnique,
   IsDefined,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
+  IsUrl,
   MaxLength,
-  Min,
 } from 'class-validator';
 import { Genre } from '../enums/genres.enum';
 
 export class CreateMovieDto {
-  @IsNotEmpty()
-  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayUnique()
   @IsEnum(Genre, { each: true })
-  genres: Genre[];
+  readonly genres: Set<Genre>;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  title: string;
+  readonly title: string;
 
   @IsDefined()
   @IsNumber()
-  year: number;
+  @IsPositive()
+  readonly year: number;
 
   @IsDefined()
   @IsNumber()
-  @Min(0)
-  runtime: number;
+  @IsPositive()
+  readonly runtime: number;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  director: string;
+  readonly director: string;
 
   @IsOptional()
   @IsString()
-  actors?: string;
+  readonly actors?: string;
 
   @IsOptional()
   @IsString()
-  plot?: string;
+  readonly plot?: string;
 
   @IsOptional()
-  @IsString()
-  posterUrl?: string;
+  @IsUrl()
+  readonly posterUrl?: string;
 }
