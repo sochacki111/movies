@@ -42,16 +42,16 @@ export class MoviesRepository {
     return newMovie;
   }
 
-  async findAll(filter?: GetMoviesDto): Promise<Movie[]> {
+  async findAll(searchParams?: GetMoviesDto): Promise<Movie[]> {
     const allMovies = (await this.dbJsonService.read()).movies;
     let foundMovies = allMovies;
 
-    if (filter?.duration) {
-      foundMovies = this.filterDuration(allMovies, filter.duration);
+    if (searchParams?.duration) {
+      foundMovies = this.filterDuration(allMovies, searchParams.duration);
     }
 
-    if (filter?.genres) {
-      foundMovies = this.filterByGenres(foundMovies, filter.genres);
+    if (searchParams?.genres) {
+      foundMovies = this.filterByGenres(foundMovies, searchParams.genres);
     }
 
     return foundMovies;

@@ -124,13 +124,13 @@ describe('MoviesController', () => {
           'https://images-na.ssl-images-amazon.com/images/M/MV5BMTUwODE3MDE0MV5BMl5BanBnXkFtZTgwNTk1MjI4MzE@._V1_SX300.jpg',
       };
 
-      const filter: GetMoviesDto = { duration: 100 };
+      const searchParams: GetMoviesDto = { duration: 100 };
 
       jest
         .spyOn(moviesService, 'find')
         .mockImplementation(async () => randomMovieFilteredByDuration);
 
-      const result = await moviesController.find(filter);
+      const result = await moviesController.find(searchParams);
 
       expect(result).toStrictEqual(randomMovieFilteredByDuration);
     });
@@ -163,13 +163,13 @@ describe('MoviesController', () => {
         },
       ];
 
-      const filter: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
+      const searchParams: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
 
       jest
         .spyOn(moviesService, 'find')
         .mockImplementation(async () => moviesFilteredByGenre);
 
-      const result = await moviesController.find(filter);
+      const result = await moviesController.find(searchParams);
 
       expect(result).toStrictEqual(moviesFilteredByGenre);
     });
@@ -201,7 +201,7 @@ describe('MoviesController', () => {
           year: '2011',
         },
       ];
-      const filter: GetMoviesDto = {
+      const searchParams: GetMoviesDto = {
         duration: 100,
         genres: new Set([Genre.Comedy]),
       };
@@ -210,7 +210,7 @@ describe('MoviesController', () => {
         .spyOn(moviesService, 'find')
         .mockImplementation(async () => moviesFilteredByDurationAndGenre);
 
-      const result = await moviesController.find(filter);
+      const result = await moviesController.find(searchParams);
       expect(result).toStrictEqual(moviesFilteredByDurationAndGenre);
     });
 

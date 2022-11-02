@@ -137,13 +137,13 @@ describe('MoviesService', () => {
         },
       ];
 
-      const filter: GetMoviesDto = { duration: 100 };
+      const searchParams: GetMoviesDto = { duration: 100 };
 
       jest
         .spyOn(moviesRepository, 'findAll')
         .mockImplementation(async () => moviesFilteredByDuration);
 
-      const result = await moviesService.find(filter);
+      const result = await moviesService.find(searchParams);
       expect(result).toStrictEqual({
         id: expect.any(Number),
         title: expect.any(String),
@@ -187,13 +187,13 @@ describe('MoviesService', () => {
         },
       ];
 
-      const filter: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
+      const searchParams: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
 
       jest
         .spyOn(moviesRepository, 'findAll')
         .mockImplementation(async () => moviesFilteredByGenre);
 
-      const result = await moviesService.find(filter);
+      const result = await moviesService.find(searchParams);
 
       expect(result).toStrictEqual(moviesFilteredByGenre);
     });
@@ -225,7 +225,7 @@ describe('MoviesService', () => {
           year: '2011',
         },
       ];
-      const filter: GetMoviesDto = {
+      const searchParams: GetMoviesDto = {
         duration: 100,
         genres: new Set([Genre.Comedy]),
       };
@@ -234,7 +234,7 @@ describe('MoviesService', () => {
         .spyOn(moviesRepository, 'findAll')
         .mockImplementation(async () => moviesFilteredByDurationAndGenre);
 
-      const result = await moviesService.find(filter);
+      const result = await moviesService.find(searchParams);
       expect(result).toStrictEqual(moviesFilteredByDurationAndGenre);
     });
 

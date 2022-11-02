@@ -136,34 +136,34 @@ describe('MoviesRepository', () => {
 
   describe('findAll', () => {
     it('should return an array of movies filtered by duration', async () => {
-      const filter: GetMoviesDto = { duration: 100 };
+      const searchParams: GetMoviesDto = { duration: 100 };
 
       jest.spyOn(dbJsonService, 'read').mockImplementation(async () => dbJson);
 
-      const result = await moviesRepository.findAll(filter);
+      const result = await moviesRepository.findAll(searchParams);
 
       expect(result).toStrictEqual([dbJson.movies[0]]);
     });
 
     it('should return an array of movies filtered by genres', async () => {
-      const filter: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
+      const searchParams: GetMoviesDto = { genres: new Set([Genre.Comedy]) };
 
       jest.spyOn(dbJsonService, 'read').mockImplementation(async () => dbJson);
 
-      const result = await moviesRepository.findAll(filter);
+      const result = await moviesRepository.findAll(searchParams);
 
       expect(result).toStrictEqual([dbJson.movies[0]]);
     });
 
     it('should return an array of movies filtered by duration and genres', async () => {
-      const filter: GetMoviesDto = {
+      const searchParams: GetMoviesDto = {
         duration: 100,
         genres: new Set([Genre.Comedy]),
       };
 
       jest.spyOn(dbJsonService, 'read').mockImplementation(async () => dbJson);
 
-      const result = await moviesRepository.findAll(filter);
+      const result = await moviesRepository.findAll(searchParams);
 
       expect(result).toStrictEqual([dbJson.movies[0]]);
     });
