@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import fs from 'fs';
@@ -49,6 +50,18 @@ describe('DbJsonService', () => {
       expect(fs.promises.readFile).toHaveBeenCalled();
       expect(result).toStrictEqual(JSON.parse(jsonFileContent));
     });
+
+    it('should throw InternalServerErrorException on data not in json format', async () => {
+      const fileContentNotInJson = 'fileContentNotInJson';
+
+      jest
+        .spyOn(fs.promises, 'readFile')
+        .mockImplementation(async () => fileContentNotInJson);
+
+      await expect(dbJsonService.read()).rejects.toEqual(
+        new InternalServerErrorException(),
+      );
+    });
   });
 
   describe('save', () => {
@@ -90,6 +103,16 @@ describe('DbJsonService', () => {
       await dbJsonService.save(dbJson);
 
       expect(fs.promises.writeFile).toHaveBeenCalled();
+    });
+
+    it('should throw InternalServerErrorException on failed database save', async () => {
+      jest.spyOn(fs.promises, 'writeFile').mockImplementation(async () => {
+        throw new Error();
+      });
+
+      await expect(dbJsonService.read()).rejects.toEqual(
+        new InternalServerErrorException(),
+      );
     });
   });
 });
