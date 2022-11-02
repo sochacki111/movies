@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { Movie } from './entities/movie.entity';
@@ -25,8 +25,13 @@ export class MoviesService {
     return movies;
   }
 
-  // TODO Throw not found
   private getRandomMovie(movies: Movie[]): Movie {
-    return movies[Math.floor(Math.random() * movies.length)];
+    const randomMovie = movies[Math.floor(Math.random() * movies.length)];
+
+    if (randomMovie) {
+      return randomMovie;
+    }
+
+    throw new NotFoundException();
   }
 }
