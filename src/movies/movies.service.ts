@@ -4,7 +4,6 @@ import { GetMoviesDto } from './dto/get-movies.dto';
 import { Movie } from './entities/movie.entity';
 import { MoviesRepository } from './movies.repository';
 
-// TODO Map movies
 @Injectable()
 export class MoviesService {
   constructor(private readonly moviesRepository: MoviesRepository) {}

@@ -155,8 +155,6 @@ describe('MoviesService', () => {
         plot: expect.any(String),
         posterUrl: expect.any(String),
       });
-
-      // expect(Number((result as Movie).runtime)).toBeGreaterThanOrEqual() // TODO check if duration between 10
     });
 
     it('should return an array of movies filtered by genres', async () => {

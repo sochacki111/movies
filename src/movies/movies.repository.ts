@@ -58,7 +58,6 @@ export class MoviesRepository {
   }
 
   private getNextId(movies: Movie[]): number {
-    // TODO Make generic
     return movies.reduce((acc: number, curr) => Math.max(acc, curr.id), 0) + 1;
   }
 
